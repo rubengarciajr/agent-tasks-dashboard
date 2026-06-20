@@ -52,19 +52,25 @@ export default function AgentDashboard() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortMode, setSortMode] = useState<SortMode>("default");
+  const [selectedAgent, setSelectedAgent] = useState<string | null>(null); // null = show all
 
   // Apply filters
-  let filteredAgents = rawAgents.map((agent) => {
-    const filteredTasks = agent.tasks.filter((task) => {
-      const matchesCategory =
-        selectedCategory === "All" || task.category === selectedCategory;
-      const matchesSearch =
-        task.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        task.description.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesCategory && matchesSearch;
+  let filteredAgents = rawAgents
+    .filter((agent) => {
+      if (selectedAgent === null) return true;
+      return agent.agent_id === selectedAgent;
+    })
+    .map((agent) => {
+      const filteredTasks = agent.tasks.filter((task) => {
+        const matchesCategory =
+          selectedCategory === "All" || task.category === selectedCategory;
+        const matchesSearch =
+          task.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          task.description.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesCategory && matchesSearch;
+      });
+      return { ...agent, tasks: filteredTasks };
     });
-    return { ...agent, tasks: filteredTasks };
-  });
 
   // Apply sorting by agent_id
   if (sortMode === "id-asc") {
@@ -82,13 +88,6 @@ export default function AgentDashboard() {
     (sum, a) => sum + a.tasks.filter((t) => (t.status ?? "active") === "active").length,
     0
   );
-
-  const sortLabel =
-    sortMode === "id-asc"
-      ? "ID A–Z"
-      : sortMode === "id-desc"
-      ? "ID Z–A"
-      : "Default order";
 
   return (
     <div className="min-h-screen">
@@ -158,6 +157,33 @@ export default function AgentDashboard() {
               {activeTasks}
             </div>
           </div>
+        </div>
+
+        {/* Agent Filter (new) */}
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setSelectedAgent(null)}
+            className={`rounded-full px-4 py-1.5 text-sm transition-all ${
+              selectedAgent === null
+                ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+                : "border border-zinc-200 hover:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-900"
+            }`}
+          >
+            All Agents
+          </button>
+          {rawAgents.map((agent) => (
+            <button
+              key={agent.agent_id}
+              onClick={() => setSelectedAgent(agent.agent_id)}
+              className={`rounded-full px-4 py-1.5 text-sm transition-all ${
+                selectedAgent === agent.agent_id
+                  ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+                  : "border border-zinc-200 hover:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-900"
+              }`}
+            >
+              {agent.agent_name || agent.agent_id}
+            </button>
+          ))}
         </div>
 
         {/* Filters + Sort */}
