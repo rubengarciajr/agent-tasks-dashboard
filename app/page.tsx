@@ -47,7 +47,7 @@ const allProjects = Array.from(
 type SortMode = "default" | "id-asc" | "id-desc" | "priority";
 
 export default function AgentDashboard() {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [selectedProject, setSelectedProject] = useState<string>("All");
   const [searchTerm, setSearchTerm] = useState("");
@@ -146,10 +146,10 @@ export default function AgentDashboard() {
               {activeTasks} active • {heartedCount} hearted • {highPriorityCount} high priority
             </div>
             <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
               className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 hover:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-900"
             >
-              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              {resolvedTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
           </div>
         </div>
