@@ -23,13 +23,15 @@
   --accent: #f4f4f5;
 }
 
+/* Base */
+html,
 body {
   font-family: var(--font-geist-sans);
   background: var(--bg);
   color: var(--text);
 }
 
-/* Calm, easy-on-the-eyes components */
+/* Cards and surfaces */
 .card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -45,6 +47,7 @@ body {
   border-color: #3f3f46;
 }
 
+/* Badges */
 .badge {
   font-size: 11px;
   font-weight: 500;
@@ -54,10 +57,25 @@ body {
   color: var(--text-muted);
 }
 
+/* Task rows */
 .task-row {
   border-bottom: 1px solid var(--border);
 }
 
 .task-row:last-child {
   border-bottom: none;
+}
+
+/* Ensure text colors adapt */
+.text-zinc-600 {
+  color: var(--text-muted);
+}
+
+.dark .text-zinc-600 {
+  color: var(--text-muted);
+}
+
+/* Header backdrop */
+header {
+  background: color-mix(in srgb, var(--card) 80%, transparent);
 }
