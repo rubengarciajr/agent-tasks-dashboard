@@ -317,7 +317,7 @@ export default function AgentDashboard() {
                     return (
                       <div
                         key={task.id}
-                        className="task-row px-8 py-6 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30"
+                        className={`task-row px-8 py-6 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30 ${isHearted ? "bg-rose-50/70 dark:bg-rose-950/40" : ""}`}
                       >
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                           <div className="flex-1">
