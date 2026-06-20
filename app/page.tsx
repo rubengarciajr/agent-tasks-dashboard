@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Moon, Sun, Users, Clock, ArrowUpDown } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Moon, Sun, Users, Clock, ArrowUpDown, Heart } from "lucide-react";
 import { useTheme } from "next-themes";
 
 // Import task data (source of truth)
@@ -52,7 +52,24 @@ export default function AgentDashboard() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortMode, setSortMode] = useState<SortMode>("default");
-  const [selectedAgent, setSelectedAgent] = useState<string | null>(null); // null = show all
+  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
+  const [showHeartedOnly, setShowHeartedOnly] = useState(false);
+  const [heartedTasks, setHeartedTasks] = useState<Record<string, boolean>>({});
+
+  // Load hearts from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("heartedTasks");
+    if (saved) {
+      setHeartedTasks(JSON.parse(saved));
+    }
+  }, []);
+
+  // Save hearts to localStorage
+  const toggleHeart = (taskId: string) => {
+    const newHearted = { ...heartedTasks, [taskId]: !heartedTasks[taskId] };
+    setHeartedTasks(newHearted);
+    localStorage.setItem("heartedTasks", JSON.stringify(newHearted));
+  };
 
   // Apply filters
   let filteredAgents = rawAgents
@@ -67,10 +84,12 @@ export default function AgentDashboard() {
         const matchesSearch =
           task.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           task.description.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesCategory && matchesSearch;
+        const matchesHearted = !showHeartedOnly || heartedTasks[task.id];
+        return matchesCategory && matchesSearch && matchesHearted;
       });
       return { ...agent, tasks: filteredTasks };
-    });
+    })
+    .filter((agent) => agent.tasks.length > 0); // hide empty agents when filtering
 
   // Apply sorting by agent_id
   if (sortMode === "id-asc") {
@@ -88,6 +107,7 @@ export default function AgentDashboard() {
     (sum, a) => sum + a.tasks.filter((t) => (t.status ?? "active") === "active").length,
     0
   );
+  const heartedCount = Object.values(heartedTasks).filter(Boolean).length;
 
   return (
     <div className="min-h-screen">
@@ -108,7 +128,7 @@ export default function AgentDashboard() {
 
           <div className="flex items-center gap-4">
             <div className="hidden text-sm text-zinc-500 dark:text-zinc-400 sm:block">
-              {activeTasks} active tasks across {rawAgents.length} agents
+              {activeTasks} active • {heartedCount} hearted
             </div>
 
             <button
@@ -142,7 +162,7 @@ export default function AgentDashboard() {
         </div>
 
         {/* Stats */}
-        <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
           <div className="card p-6">
             <div className="text-sm text-zinc-500 dark:text-zinc-400">Total Agents</div>
             <div className="mt-1 text-4xl font-semibold tracking-tighter">{rawAgents.length}</div>
@@ -155,6 +175,12 @@ export default function AgentDashboard() {
             <div className="text-sm text-zinc-500 dark:text-zinc-400">Active Tasks</div>
             <div className="mt-1 text-4xl font-semibold tracking-tighter text-emerald-600 dark:text-emerald-500">
               {activeTasks}
+            </div>
+          </div>
+          <div className="card p-6">
+            <div className="text-sm text-zinc-500 dark:text-zinc-400">Hearted</div>
+            <div className="mt-1 text-4xl font-semibold tracking-tighter text-rose-500">
+              {heartedCount}
             </div>
           </div>
         </div>
@@ -186,10 +212,10 @@ export default function AgentDashboard() {
           ))}
         </div>
 
-        {/* Divider under toggles */}
+        {/* Divider */}
         <div className="mb-8 border-t border-zinc-200 dark:border-zinc-800" />
 
-        {/* Filters + Sort */}
+        {/* Filters + Sort + Hearted Toggle */}
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-2">
             <button
@@ -215,6 +241,19 @@ export default function AgentDashboard() {
                 {cat}
               </button>
             ))}
+
+            {/* Hearted Filter */}
+            <button
+              onClick={() => setShowHeartedOnly(!showHeartedOnly)}
+              className={`ml-2 flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm transition-all ${
+                showHeartedOnly
+                  ? "bg-rose-600 text-white"
+                  : "border border-zinc-200 hover:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-900"
+              }`}
+            >
+              <Heart className={`h-3.5 w-3.5 ${showHeartedOnly ? "fill-white" : ""}`} />
+              Hearted Only
+            </button>
 
             {/* Sort by ID */}
             <div className="ml-2 flex items-center gap-1.5 rounded-full border border-zinc-200 px-3 py-1 text-sm dark:border-zinc-800">
@@ -242,89 +281,111 @@ export default function AgentDashboard() {
 
         {/* Agents Grid */}
         <div className="space-y-8">
-          {filteredAgents.map((agent) => (
-            <div key={agent.agent_id} className="card overflow-hidden">
-              <div className="flex flex-col gap-2 border-b border-zinc-200 p-8 dark:border-zinc-800 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <div className="flex items-center gap-3">
-                    <h2 className="text-2xl font-semibold tracking-tight">
-                      {agent.agent_name || agent.agent_id}
-                    </h2>
-                    {agent.machine && (
-                      <span className="rounded-full border border-zinc-200 px-3 py-0.5 text-xs text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
-                        {agent.machine}
-                      </span>
-                    )}
+          {filteredAgents.length > 0 ? (
+            filteredAgents.map((agent) => (
+              <div key={agent.agent_id} className="card overflow-hidden">
+                <div className="flex flex-col gap-2 border-b border-zinc-200 p-8 dark:border-zinc-800 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-2xl font-semibold tracking-tight">
+                        {agent.agent_name || agent.agent_id}
+                      </h2>
+                      {agent.machine && (
+                        <span className="rounded-full border border-zinc-200 px-3 py-0.5 text-xs text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+                          {agent.machine}
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-1.5 max-w-3xl text-[15px] text-zinc-600 dark:text-zinc-400">
+                      {agent.description}
+                    </p>
                   </div>
-                  <p className="mt-1.5 max-w-3xl text-[15px] text-zinc-600 dark:text-zinc-400">
-                    {agent.description}
-                  </p>
+                  <div className="text-right text-sm text-zinc-500 dark:text-zinc-400">
+                    Updated{" "}
+                    {agent.updated || agent.last_updated
+                      ? new Date(
+                          agent.updated || agent.last_updated || ""
+                        ).toLocaleDateString()
+                      : "recently"}
+                  </div>
                 </div>
-                <div className="text-right text-sm text-zinc-500 dark:text-zinc-400">
-                  Updated{" "}
-                  {agent.updated || agent.last_updated
-                    ? new Date(
-                        agent.updated || agent.last_updated || ""
-                      ).toLocaleDateString()
-                    : "recently"}
-                </div>
-              </div>
 
-              {/* Tasks */}
-              <div className="divide-y divide-zinc-200 dark:divide-zinc-800">
-                {agent.tasks.length > 0 ? (
-                  agent.tasks.map((task) => (
-                    <div
-                      key={task.id}
-                      className="task-row px-8 py-6 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30"
-                    >
-                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3">
-                            <div className="font-medium tracking-tight">{task.name}</div>
-                            {task.category && (
-                              <span className="badge">{task.category}</span>
-                            )}
-                            {task.status && task.status !== "active" && (
-                              <span className="badge text-amber-600 border-amber-200 dark:border-amber-900">
-                                {task.status}
-                              </span>
-                            )}
-                          </div>
-                          <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-                            {task.description}
-                          </p>
-                        </div>
-
-                        <div className="flex flex-col items-start gap-1.5 text-sm text-zinc-500 dark:text-zinc-400 sm:w-56 sm:items-end">
-                          <div className="flex items-center gap-1.5">
-                            <Clock className="h-3.5 w-3.5" />
-                            <span>{task.schedule}</span>
-                          </div>
-                          {task.cron_job_id && (
-                            <div className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
-                              {task.cron_job_id}
+                {/* Tasks */}
+                <div className="divide-y divide-zinc-200 dark:divide-zinc-800">
+                  {agent.tasks.map((task) => {
+                    const isHearted = !!heartedTasks[task.id];
+                    return (
+                      <div
+                        key={task.id}
+                        className="task-row px-8 py-6 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30"
+                      >
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3">
+                              <button
+                                onClick={() => toggleHeart(task.id)}
+                                className="text-rose-500 transition-colors hover:text-rose-600"
+                                aria-label={isHearted ? "Unheart task" : "Heart task"}
+                              >
+                                <Heart
+                                  className={`h-4 w-4 transition-all ${
+                                    isHearted ? "fill-rose-500" : "fill-transparent"
+                                  }`}
+                                />
+                              </button>
+                              <div className="font-medium tracking-tight">{task.name}</div>
+                              {task.category && (
+                                <span className="badge">{task.category}</span>
+                              )}
+                              {task.status && task.status !== "active" && (
+                                <span className="badge text-amber-600 border-amber-200 dark:border-amber-900">
+                                  {task.status}
+                                </span>
+                              )}
                             </div>
-                          )}
+                            <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                              {task.description}
+                            </p>
+                            {/* ID + Agent Info */}
+                            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500 dark:text-zinc-400 font-mono">
+                              <div>
+                                <span className="text-zinc-400 dark:text-zinc-500">ID:</span> {task.id}
+                              </div>
+                              <div>
+                                <span className="text-zinc-400 dark:text-zinc-500">Agent:</span> {agent.agent_name || agent.agent_id}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col items-start gap-1.5 text-sm text-zinc-500 dark:text-zinc-400 sm:w-56 sm:items-end">
+                            <div className="flex items-center gap-1.5">
+                              <Clock className="h-3.5 w-3.5" />
+                              <span>{task.schedule}</span>
+                            </div>
+                            {task.cron_job_id && (
+                              <div className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
+                                {task.cron_job_id}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="px-8 py-10 text-center text-sm text-zinc-500">
-                    No tasks match the current filters.
-                  </div>
-                )}
+                    );
+                  })}
+                </div>
               </div>
+            ))
+          ) : (
+            <div className="py-16 text-center text-zinc-500">
+              No tasks match your current filters.
             </div>
-          ))}
+          )}
         </div>
 
         {/* Footer note */}
         <div className="mt-16 border-t border-zinc-200 pt-8 text-center text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
-          This dashboard is driven 100% by the JSON files in{" "}
-          <code className="font-mono text-xs">~/Desktop/Hermes/tasks/</code>.{" "}
-          Update the JSONs locally and the dashboard stays in sync.
+          Hearts are saved in your browser. This dashboard is driven 100% by the JSON files in{" "}
+          <code className="font-mono text-xs">~/Desktop/Hermes/tasks/</code>.
         </div>
       </div>
     </div>
