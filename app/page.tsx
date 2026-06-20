@@ -276,7 +276,7 @@ export default function AgentDashboard() {
                     return (
                       <div key={task.id} className={`px-8 py-7 transition-colors ${isHearted ? "bg-rose-50/70 dark:bg-rose-950/30" : ""} ${isHighPriority && !isHearted ? "bg-amber-50/60 dark:bg-amber-950/20" : ""}`}>
                         <div className="flex gap-4">
-                          <button onClick={() => toggleHeart(task.id)} className="mt-1 text-rose-500">
+                          <button onClick={() => toggleHeart(task.id)} className="mt-1 flex-shrink-0 text-rose-500">
                             <Heart className={`h-4 w-4 ${isHearted ? "fill-rose-500" : "fill-transparent"}`} />
                           </button>
                           <div className="flex-1 min-w-0">
@@ -293,7 +293,7 @@ export default function AgentDashboard() {
                               {task.project && <div><span className="text-zinc-400">Project:</span> {task.project}</div>}
                             </div>
                           </div>
-                          <div className="text-right text-sm text-zinc-500 w-48 shrink-0">
+                          <div className="text-right text-sm text-zinc-500 w-36 md:w-44 shrink-0">
                             <div className="flex items-center gap-1.5 justify-end"><Clock className="h-3.5 w-3.5" />{task.schedule}</div>
                             {task.cron_job_id && <div className="font-mono text-xs mt-1 text-zinc-400">{task.cron_job_id}</div>}
                           </div>
