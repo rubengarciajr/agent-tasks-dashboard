@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Moon, Sun, Users, Clock } from "lucide-react";
+import { Moon, Sun, Users, Clock, ArrowUpDown } from "lucide-react";
 import { useTheme } from "next-themes";
 
 // Import task data (source of truth)
@@ -31,8 +31,7 @@ interface Agent {
   tasks: Task[];
 }
 
-// Cast with unknown first to handle varying JSON structures
-const agents: Agent[] = [
+const rawAgents: Agent[] = [
   studioTasks as unknown as Agent,
   macminiTasks as unknown as Agent,
   openclawTasks as unknown as Agent,
@@ -40,18 +39,22 @@ const agents: Agent[] = [
 
 const allCategories = Array.from(
   new Set(
-    agents.flatMap((a) =>
+    rawAgents.flatMap((a) =>
       a.tasks.map((t) => t.category).filter(Boolean)
     ) as string[]
   )
 );
 
+type SortMode = "default" | "id-asc" | "id-desc";
+
 export default function AgentDashboard() {
   const { theme, setTheme } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortMode, setSortMode] = useState<SortMode>("default");
 
-  const filteredAgents = agents.map((agent) => {
+  // Apply filters
+  let filteredAgents = rawAgents.map((agent) => {
     const filteredTasks = agent.tasks.filter((task) => {
       const matchesCategory =
         selectedCategory === "All" || task.category === selectedCategory;
@@ -63,11 +66,29 @@ export default function AgentDashboard() {
     return { ...agent, tasks: filteredTasks };
   });
 
-  const totalTasks = agents.reduce((sum, a) => sum + a.tasks.length, 0);
-  const activeTasks = agents.reduce(
+  // Apply sorting by agent_id
+  if (sortMode === "id-asc") {
+    filteredAgents.sort((a, b) =>
+      a.agent_id.localeCompare(b.agent_id)
+    );
+  } else if (sortMode === "id-desc") {
+    filteredAgents.sort((a, b) =>
+      b.agent_id.localeCompare(a.agent_id)
+    );
+  }
+
+  const totalTasks = rawAgents.reduce((sum, a) => sum + a.tasks.length, 0);
+  const activeTasks = rawAgents.reduce(
     (sum, a) => sum + a.tasks.filter((t) => (t.status ?? "active") === "active").length,
     0
   );
+
+  const sortLabel =
+    sortMode === "id-asc"
+      ? "ID A–Z"
+      : sortMode === "id-desc"
+      ? "ID Z–A"
+      : "Default order";
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
@@ -88,7 +109,7 @@ export default function AgentDashboard() {
 
           <div className="flex items-center gap-4">
             <div className="hidden text-sm text-zinc-500 dark:text-zinc-400 sm:block">
-              {activeTasks} active tasks across {agents.length} agents
+              {activeTasks} active tasks across {rawAgents.length} agents
             </div>
 
             <button
@@ -125,7 +146,7 @@ export default function AgentDashboard() {
         <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
           <div className="card p-6">
             <div className="text-sm text-zinc-500 dark:text-zinc-400">Total Agents</div>
-            <div className="mt-1 text-4xl font-semibold tracking-tighter">{agents.length}</div>
+            <div className="mt-1 text-4xl font-semibold tracking-tighter">{rawAgents.length}</div>
           </div>
           <div className="card p-6">
             <div className="text-sm text-zinc-500 dark:text-zinc-400">Total Tasks</div>
@@ -139,9 +160,9 @@ export default function AgentDashboard() {
           </div>
         </div>
 
-        {/* Filters */}
+        {/* Filters + Sort */}
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setSelectedCategory("All")}
               className={`rounded-full px-4 py-1.5 text-sm transition-all ${
@@ -165,6 +186,20 @@ export default function AgentDashboard() {
                 {cat}
               </button>
             ))}
+
+            {/* Sort by ID */}
+            <div className="ml-2 flex items-center gap-1.5 rounded-full border border-zinc-200 px-3 py-1 text-sm dark:border-zinc-800">
+              <ArrowUpDown className="h-3.5 w-3.5 text-zinc-400" />
+              <select
+                value={sortMode}
+                onChange={(e) => setSortMode(e.target.value as SortMode)}
+                className="bg-transparent text-sm focus:outline-none"
+              >
+                <option value="default">Default order</option>
+                <option value="id-asc">Sort by ID A–Z</option>
+                <option value="id-desc">Sort by ID Z–A</option>
+              </select>
+            </div>
           </div>
 
           <input
