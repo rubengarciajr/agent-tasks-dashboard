@@ -88,3 +88,32 @@ body {
 header {
   background: color-mix(in srgb, var(--card) 80%, transparent);
 }
+
+/*
+ * Theme-switch animation (View Transitions API).
+ * Replace the browser's default cross-fade with a clean circular reveal:
+ * the new theme is clipped over the old one (animated in page.tsx), so we
+ * only need to disable the default animation and stack the layers here.
+ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+}
+
+/* Respect users who prefer reduced motion (JS also guards against this). */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}

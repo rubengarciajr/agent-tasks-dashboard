@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { flushSync } from "react-dom";
 import { Moon, Sun, Users, Clock, ArrowUpDown, Heart, Star } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -61,6 +62,58 @@ export default function AgentDashboard() {
     const saved = localStorage.getItem("heartedTasks");
     if (saved) setHeartedTasks(JSON.parse(saved));
   }, []);
+
+  const toggleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const next = resolvedTheme === "dark" ? "light" : "dark";
+
+    // The View Transitions API isn't in every browser's type defs yet.
+    const startViewTransition = (
+      document as Document & {
+        startViewTransition?: (cb: () => void) => { ready: Promise<void> };
+      }
+    ).startViewTransition?.bind(document);
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    // Fall back to an instant switch when animation isn't supported or wanted.
+    if (!startViewTransition || prefersReducedMotion) {
+      setTheme(next);
+      return;
+    }
+
+    // Reveal the new theme as a circle expanding from the toggle button to the
+    // farthest corner of the viewport.
+    const x = e.clientX;
+    const y = e.clientY;
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    // flushSync forces next-themes to apply the `.dark` class synchronously so
+    // the new theme is captured in the View Transition's "after" snapshot.
+    const transition = startViewTransition(() => {
+      flushSync(() => setTheme(next));
+    });
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 500,
+          easing: "ease-in-out",
+          pseudoElement: "::view-transition-new(root)",
+        }
+      );
+    });
+  };
 
   const toggleHeart = (taskId: string) => {
     const newHearted = { ...heartedTasks, [taskId]: !heartedTasks[taskId] };
@@ -146,7 +199,8 @@ export default function AgentDashboard() {
               {activeTasks} active • {heartedCount} hearted • {highPriorityCount} high priority
             </div>
             <button
-              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+              onClick={toggleTheme}
+              aria-label="Toggle dark mode"
               className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 hover:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-900"
             >
               {resolvedTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
