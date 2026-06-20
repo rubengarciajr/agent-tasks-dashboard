@@ -159,7 +159,7 @@ export default function AgentDashboard() {
           </div>
         </div>
 
-        {/* Agent Filter (new) */}
+        {/* Agent Filter */}
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <button
             onClick={() => setSelectedAgent(null)}
@@ -185,6 +185,9 @@ export default function AgentDashboard() {
             </button>
           ))}
         </div>
+
+        {/* Divider under toggles */}
+        <div className="mb-8 border-t border-zinc-200 dark:border-zinc-800" />
 
         {/* Filters + Sort */}
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
