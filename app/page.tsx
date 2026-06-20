@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Moon, Sun, Users, Clock, ArrowUpDown, Heart, Star, Filter } from "lucide-react";
+import { Moon, Sun, Users, Clock, ArrowUpDown, Heart, Star } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import studioTasks from "../data/hermes-studio-tasks.json";
@@ -57,7 +57,6 @@ export default function AgentDashboard() {
   const [showFocusMode, setShowFocusMode] = useState(false);
   const [heartedTasks, setHeartedTasks] = useState<Record<string, boolean>>({});
 
-  // Load hearts
   useEffect(() => {
     const saved = localStorage.getItem("heartedTasks");
     if (saved) setHeartedTasks(JSON.parse(saved));
@@ -69,12 +68,10 @@ export default function AgentDashboard() {
     localStorage.setItem("heartedTasks", JSON.stringify(newHearted));
   };
 
-  // Get all tasks flattened with agent info
   const allTasksWithAgent = rawAgents.flatMap((agent) =>
     agent.tasks.map((task) => ({ ...task, agent }))
   );
 
-  // Focus tasks (hearted or high priority)
   const focusTasks = allTasksWithAgent
     .filter((t) => heartedTasks[t.id] || t.priority === "high")
     .sort((a, b) => {
@@ -83,7 +80,6 @@ export default function AgentDashboard() {
       return bScore - aScore;
     });
 
-  // Apply filters
   let filteredAgents = rawAgents
     .filter((agent) => (selectedAgent === null ? true : agent.agent_id === selectedAgent))
     .map((agent) => {
@@ -101,7 +97,6 @@ export default function AgentDashboard() {
     })
     .filter((agent) => agent.tasks.length > 0);
 
-  // Sorting
   if (sortMode === "id-asc") {
     filteredAgents.sort((a, b) => a.agent_id.localeCompare(b.agent_id));
   } else if (sortMode === "id-desc") {
@@ -134,9 +129,8 @@ export default function AgentDashboard() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
-      {/* Top Bar */}
       <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95">
-        <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900">
               <Users className="h-5 w-5" />
@@ -161,8 +155,7 @@ export default function AgentDashboard() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-screen-2xl px-8 py-10">
-        {/* Header */}
+      <div className="mx-auto max-w-7xl px-6 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-semibold tracking-tighter">What matters most</h1>
           <p className="mt-2 text-lg text-zinc-600 dark:text-zinc-400">
@@ -170,7 +163,6 @@ export default function AgentDashboard() {
           </p>
         </div>
 
-        {/* Stats */}
         <div className="mb-14 grid grid-cols-2 gap-4 sm:grid-cols-5">
           <div className="card p-6"><div className="text-sm text-zinc-500">Agents</div><div className="text-4xl font-semibold tracking-tighter mt-1">{rawAgents.length}</div></div>
           <div className="card p-6"><div className="text-sm text-zinc-500">Total Tasks</div><div className="text-4xl font-semibold tracking-tighter mt-1">{totalTasks}</div></div>
@@ -179,7 +171,6 @@ export default function AgentDashboard() {
           <div className="card p-6"><div className="text-sm text-zinc-500">High Priority</div><div className="text-4xl font-semibold tracking-tighter mt-1 text-red-600 dark:text-red-500">{highPriorityCount}</div></div>
         </div>
 
-        {/* Focus Mode Banner */}
         {focusTasks.length > 0 && (
           <div className="mb-10 rounded-2xl border border-rose-200 bg-rose-50/80 p-8 dark:border-rose-900/50 dark:bg-rose-950/30">
             <div className="flex items-center justify-between mb-4">
@@ -205,7 +196,6 @@ export default function AgentDashboard() {
           </div>
         )}
 
-        {/* Agent Filter */}
         <div className="mb-6 flex flex-wrap items-center gap-2">
           <button onClick={() => setSelectedAgent(null)} className={`rounded-full px-4 py-1.5 text-sm ${selectedAgent === null ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "border"}`}>All Agents</button>
           {rawAgents.map((agent) => (
@@ -217,16 +207,13 @@ export default function AgentDashboard() {
 
         <div className="mb-8 border-t border-zinc-200 dark:border-zinc-800" />
 
-        {/* Filters */}
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-2">
-            {/* Category */}
             <button onClick={() => setSelectedCategory("All")} className={`rounded-full px-4 py-1.5 text-sm ${selectedCategory === "All" ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "border"}`}>All</button>
             {allCategories.map((cat) => (
               <button key={cat} onClick={() => setSelectedCategory(cat)} className={`rounded-full px-4 py-1.5 text-sm ${selectedCategory === cat ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "border"}`}>{cat}</button>
             ))}
 
-            {/* Project Filter */}
             {allProjects.length > 0 && (
               <select value={selectedProject} onChange={(e) => setSelectedProject(e.target.value)} className="ml-2 rounded-full border px-4 py-1.5 text-sm">
                 <option value="All">All Projects</option>
@@ -234,12 +221,10 @@ export default function AgentDashboard() {
               </select>
             )}
 
-            {/* Hearted */}
             <button onClick={() => setShowHeartedOnly(!showHeartedOnly)} className={`ml-2 flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm ${showHeartedOnly ? "bg-rose-600 text-white" : "border"}`}>
               <Heart className={`h-3.5 w-3.5 ${showHeartedOnly ? "fill-white" : ""}`} /> Hearted
             </button>
 
-            {/* Sort */}
             <div className="ml-2 flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm">
               <ArrowUpDown className="h-3.5 w-3.5" />
               <select value={sortMode} onChange={(e) => setSortMode(e.target.value as SortMode)} className="bg-transparent text-sm focus:outline-none">
@@ -254,7 +239,6 @@ export default function AgentDashboard() {
           <input type="text" placeholder="Search tasks..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full rounded-lg border px-4 py-2 text-sm sm:w-72" />
         </div>
 
-        {/* Main Task List */}
         <div className="space-y-8">
           {filteredAgents.length > 0 ? (
             filteredAgents.map((agent) => (
@@ -274,11 +258,15 @@ export default function AgentDashboard() {
                     const isHearted = !!heartedTasks[task.id];
                     const isHighPriority = task.priority === "high";
                     return (
-                      <div key={task.id} className={`px-8 py-7 transition-colors ${isHearted ? "bg-rose-50/70 dark:bg-rose-950/30" : ""} ${isHighPriority && !isHearted ? "bg-amber-50/60 dark:bg-amber-950/20" : ""}`}>
-                        <div className="flex gap-4">
-                          <button onClick={() => toggleHeart(task.id)} className="mt-1 flex-shrink-0 text-rose-500">
-                            <Heart className={`h-4 w-4 ${isHearted ? "fill-rose-500" : "fill-transparent"}`} />
-                          </button>
+                      <div key={task.id} className={`relative px-8 py-7 pr-16 transition-colors ${isHearted ? "bg-rose-50/70 dark:bg-rose-950/30" : ""} ${isHighPriority && !isHearted ? "bg-amber-50/60 dark:bg-amber-950/20" : ""}`}>
+                        <button 
+                          onClick={() => toggleHeart(task.id)} 
+                          className="absolute top-4 right-4 z-10 text-rose-500 hover:text-rose-600 transition-colors"
+                        >
+                          <Heart className={`h-4 w-4 ${isHearted ? "fill-rose-500" : "fill-transparent"}`} />
+                        </button>
+
+                        <div className="flex gap-3 pr-2">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-3 flex-wrap">
                               <div className="font-medium tracking-tight">{task.name}</div>
@@ -286,16 +274,17 @@ export default function AgentDashboard() {
                               {task.category && <span className="badge">{task.category}</span>}
                               {task.project && <span className="badge bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400 border-blue-200">{task.project}</span>}
                             </div>
-                            <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1.5 leading-relaxed">{task.description}</p>
-                            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500 font-mono">
+
+                            <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-2 leading-relaxed">{task.description}</p>
+
+                            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-500 font-mono">
                               <div><span className="text-zinc-400">ID:</span> {task.id}</div>
                               <div><span className="text-zinc-400">Agent:</span> {agent.agent_name || agent.agent_id}</div>
                               {task.project && <div><span className="text-zinc-400">Project:</span> {task.project}</div>}
+                              <div className="text-zinc-400">•</div>
+                              <div className="flex items-center gap-1"><Clock className="h-3 w-3" />{task.schedule}</div>
+                              {task.cron_job_id && <div>{task.cron_job_id}</div>}
                             </div>
-                          </div>
-                          <div className="text-right text-sm text-zinc-500 w-36 md:w-44 shrink-0">
-                            <div className="flex items-center gap-1.5 justify-end"><Clock className="h-3.5 w-3.5" />{task.schedule}</div>
-                            {task.cron_job_id && <div className="font-mono text-xs mt-1 text-zinc-400">{task.cron_job_id}</div>}
                           </div>
                         </div>
                       </div>
