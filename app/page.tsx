@@ -171,7 +171,7 @@ export default function AgentDashboard() {
         </div>
 
         {/* Stats */}
-        <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-5">
+        <div className="mb-14 grid grid-cols-2 gap-4 sm:grid-cols-5">
           <div className="card p-6"><div className="text-sm text-zinc-500">Agents</div><div className="text-4xl font-semibold tracking-tighter mt-1">{rawAgents.length}</div></div>
           <div className="card p-6"><div className="text-sm text-zinc-500">Total Tasks</div><div className="text-4xl font-semibold tracking-tighter mt-1">{totalTasks}</div></div>
           <div className="card p-6"><div className="text-sm text-zinc-500">Active</div><div className="text-4xl font-semibold tracking-tighter mt-1 text-emerald-600 dark:text-emerald-500">{activeTasks}</div></div>
@@ -181,7 +181,7 @@ export default function AgentDashboard() {
 
         {/* Focus Mode Banner */}
         {focusTasks.length > 0 && (
-          <div className="mb-8 rounded-2xl border border-rose-200 bg-rose-50/80 p-6 dark:border-rose-900/50 dark:bg-rose-950/30">
+          <div className="mb-10 rounded-2xl border border-rose-200 bg-rose-50/80 p-8 dark:border-rose-900/50 dark:bg-rose-950/30">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Star className="h-5 w-5 text-rose-500" />
@@ -206,7 +206,7 @@ export default function AgentDashboard() {
         )}
 
         {/* Agent Filter */}
-        <div className="mb-4 flex flex-wrap items-center gap-2">
+        <div className="mb-6 flex flex-wrap items-center gap-2">
           <button onClick={() => setSelectedAgent(null)} className={`rounded-full px-4 py-1.5 text-sm ${selectedAgent === null ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "border"}`}>All Agents</button>
           {rawAgents.map((agent) => (
             <button key={agent.agent_id} onClick={() => setSelectedAgent(agent.agent_id)} className={`rounded-full px-4 py-1.5 text-sm ${selectedAgent === agent.agent_id ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "border"}`}>
@@ -274,7 +274,7 @@ export default function AgentDashboard() {
                     const isHearted = !!heartedTasks[task.id];
                     const isHighPriority = task.priority === "high";
                     return (
-                      <div key={task.id} className={`px-8 py-6 transition-colors ${isHearted ? "bg-rose-50/70 dark:bg-rose-950/30" : ""} ${isHighPriority && !isHearted ? "bg-amber-50/60 dark:bg-amber-950/20" : ""}`}>
+                      <div key={task.id} className={`px-8 py-7 transition-colors ${isHearted ? "bg-rose-50/70 dark:bg-rose-950/30" : ""} ${isHighPriority && !isHearted ? "bg-amber-50/60 dark:bg-amber-950/20" : ""}`}>
                         <div className="flex gap-4">
                           <button onClick={() => toggleHeart(task.id)} className="mt-1 text-rose-500">
                             <Heart className={`h-4 w-4 ${isHearted ? "fill-rose-500" : "fill-transparent"}`} />
