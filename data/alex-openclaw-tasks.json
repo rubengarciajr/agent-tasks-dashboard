@@ -1,0 +1,98 @@
+{
+  "agent_id": "Alex openclaw",
+  "agent_name": "Alex Finn",
+  "machine": "Rubenchis's MacBook Air",
+  "updated": "2026-06-19",
+  "tasks": [
+    {
+      "id": "daily-blog-post",
+      "name": "Daily Blog Post",
+      "schedule": "9:00 AM CST, every day",
+      "cron_job_id": "890c2b75-6933-4f9d-bf15-f981c04cf5bc",
+      "status": "active",
+      "description": "Research latest news in WordPress, AI tools, and automation. Write a 600-800 word post in the Rubenchis Bot voice. Publish to rubenchis.bot via git push to the Next.js repo. Generate a featured image if needed.",
+      "outputs": [
+        "Blog post at rubenchis.bot/blog/<slug>",
+        "Git commit + push to rubengarciajr/rubenchisbot"
+      ],
+      "notes": "Working repo is /tmp/fresh-clone. Uses web_search (minimax provider) for research. Model: minimax/MiniMax-M3. Currently has delivery issues — Telegram target chatId missing."
+    },
+    {
+      "id": "agentmail-monitoring",
+      "name": "AgentMail Inbox Check",
+      "schedule": "Hourly (via heartbeat)",
+      "status": "active",
+      "description": "Check openclaw@rubenchis.bot inbox for new messages. Only report if there are new messages.",
+      "api": "https://api.agentmail.to",
+      "inbox": "openclaw@rubenchis.bot",
+      "notes": "API key in scripts/.env.agentmail"
+    },
+    {
+      "id": "memory-maintenance",
+      "name": "Memory & Notes Maintenance",
+      "schedule": "Ongoing (during heartbeats and sessions)",
+      "status": "active",
+      "description": "Write daily memory notes to memory/YYYY-MM-DD.md. Periodically review daily files and curate significant events, lessons, and insights into MEMORY.md. Keep workspace docs updated.",
+      "outputs": [
+        "memory/YYYY-MM-DD.md daily files",
+        "MEMORY.md long-term memory",
+        "Updated TOOLS.md, USER.md, AGENTS.md"
+      ]
+    },
+    {
+      "id": "heartbeat-checks",
+      "name": "Heartbeat Periodic Checks",
+      "schedule": "~Every 30 min (heartbeat poll)",
+      "status": "active",
+      "description": "On each heartbeat, check AgentMail for new emails. Rotating checks for calendar events, social mentions, weather. Stay quiet late night (11 PM - 8 AM) unless urgent.",
+      "subtasks": [
+        {"name": "AgentMail check", "status": "connected"},
+        {"name": "Calendar check", "status": "not connected"},
+        {"name": "Social mentions", "status": "not connected"},
+        {"name": "Weather", "status": "not connected"}
+      ]
+    },
+    {
+      "id": "reminder-scheduling",
+      "name": "Reminders & Scheduled Tasks",
+      "schedule": "As requested",
+      "status": "active",
+      "description": "Set one-shot or recurring reminders and scheduled tasks via cron. Wake events for immediate follow-ups.",
+      "notes": "Uses cron tool with systemEvent or agentTurn payloads"
+    },
+    {
+      "id": "user-assistance",
+      "name": "On-Demand User Assistance",
+      "schedule": "As requested",
+      "status": "active",
+      "description": "Ad-hoc tasks for Rubenchis: web research, file management, code work, automation setup, image generation, messaging, debugging systems.",
+      "capabilities": [
+        "web search + fetch",
+        "file read/write/edit",
+        "shell commands",
+        "image generation",
+        "video generation",
+        "music generation",
+        "cron job management",
+        "session/sub-agent orchestration",
+        "Telegram messaging",
+        "Notion integration",
+        "GitHub CLI"
+      ]
+    },
+    {
+      "id": "workspace-management",
+      "name": "Workspace & Config Management",
+      "schedule": "Ongoing",
+      "status": "active",
+      "description": "Maintain the OpenClaw workspace at ~/.openclaw/workspace. Keep TOOLS.md, AGENTS.md, SOUL.md, USER.md, HEARTBEAT.md current. Manage scripts, skills, and plugin configuration.",
+      "workspace": "/Users/rubenchis/.openclaw/workspace"
+    }
+  ],
+  "maintenance_notes": "This file should be updated whenever responsibilities change — new cron jobs, new integrations, retired tasks. Alex (OpenClaw) is responsible for keeping this current.",
+  "standing_orders": [
+    "Update this file whenever a new task, cron job, or integration is created.",
+    "Update when a task is retired, disabled, or its scope changes.",
+    "Keep this file accurate — Rubenchis relies on it to track what Alex does."
+  ]
+}

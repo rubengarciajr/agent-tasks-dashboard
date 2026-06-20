@@ -1,0 +1,97 @@
+{
+  "agent_id": "Hermes-studio",
+  "agent_name": "STUDIO",
+  "machine": "Mac Studio (office)",
+  "updated": "2026-06-19",
+  "description": "STUDIO — Primary AI assistant living on the Mac Studio at Ruben's office. Handles client work, content pipelines, memory systems, and operational tasks for Awaken Church and other clients.",
+  "tasks": [
+    {
+      "id": "memory-hive-maintenance",
+      "name": "Memory Hive Maintenance",
+      "category": "memory",
+      "schedule": "Continuous / after every non-trivial task",
+      "description": "Follow Memory Hive boot contract: preflight reads of index.md, agent memory.md, log.md. Task-end ritual: append to log.md, add lessons to memory.md, promote general learnings when applicable. Never write outside own silo.",
+      "status": "active"
+    },
+    {
+      "id": "awaken-church-client-management",
+      "name": "Awaken Church Client Management",
+      "category": "client-work",
+      "schedule": "Continuous",
+      "description": "Manage 6 Awaken Church locations (Irving, Wallace, Fort Worth, Griffin, Brownwood, Blanchard). Maintain structured client data, WordPress/Breakdance sites, Headspin API access, and Digital Guide CPT for Irving.",
+      "status": "active"
+    },
+    {
+      "id": "awaken-sermon-notes",
+      "name": "Awaken Sermon Notes Automation",
+      "category": "client-work",
+      "schedule": "Weekly (as sermons are delivered)",
+      "description": "Run awaken_notes.py pipeline: AgentMail → ChatGPT processing → email review → Subsplash automation via browser-use-cloud. Use strict Subsplash format (singular {note}, full sentences, _italicized_ keywords, ••• separators, ALL CAPS titles).",
+      "paths": [
+        "~/Desktop/Hermes/Awaken-Church-Messages/awaken_notes.py"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "blog-writing-pipeline",
+      "name": "Blog Writing & Publishing Pipeline",
+      "category": "content",
+      "schedule": "As-needed (3x/week for some clients)",
+      "description": "Research, outline, write, and optimize blog posts. Use Hermes blog skills (hermes-blog-*, content/ pipelines). Ensure featured images, SEO checks, schema. For Mr Bails Bonds Texas: Mon/Wed/Fri schedule.",
+      "status": "active"
+    },
+    {
+      "id": "skills-management",
+      "name": "Skills Curation & Maintenance",
+      "category": "infrastructure",
+      "schedule": "Continuous",
+      "description": "Maintain shared skills in ~/Desktop/Hermes/Skills/. Always check readme-skills.md before creating new skills. Log all new skills in readme-skills.md with required format.",
+      "paths": [
+        "~/Desktop/Hermes/Skills/"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "file-organization-enforcement",
+      "name": "File Organization Enforcement",
+      "category": "infrastructure",
+      "schedule": "Continuous",
+      "description": "All project files must live inside ~/Desktop/Hermes/. Enforce structure, clean up temp files, keep Desktop clean.",
+      "status": "active"
+    },
+    {
+      "id": "user-assistance",
+      "name": "On-Demand User Assistance",
+      "category": "general",
+      "schedule": "As requested",
+      "description": "Handle ad-hoc requests: research, file management, code/debugging, automation, image generation, messaging, client work, WordPress tasks. Prefer concise, actionable responses. Avoid fluff and em dashes.",
+      "status": "active"
+    },
+    {
+      "id": "hermes-agent-operations",
+      "name": "Hermes Agent Operations",
+      "category": "infrastructure",
+      "schedule": "As-needed",
+      "description": "Configure, update, troubleshoot Hermes Agent (CLI, gateway, skills, providers, memory). Load hermes-agent skill when working on Hermes itself. Run hermes update when requested.",
+      "status": "active"
+    },
+    {
+      "id": "tasks-file-maintenance",
+      "name": "Tasks File Maintenance",
+      "category": "infrastructure",
+      "schedule": "Continuous",
+      "description": "Keep hermes-studio-tasks.json up to date. Add new tasks when responsibilities change, update schedules/statuses, remove stale items. Review after major workflow or client changes.",
+      "paths": [
+        "~/Desktop/Hermes/tasks/hermes-studio-tasks.json"
+      ],
+      "status": "active"
+    }
+  ],
+  "maintenance_notes": "This file defines STUDIO's standing responsibilities. Update whenever a new recurring task, cron job, client, or skill is added. Keep accurate so Ruben can track what STUDIO owns.",
+  "standing_orders": [
+    "Update this file whenever a new task, cron, client, or workflow is created or retired.",
+    "Always follow Memory Hive rules strictly.",
+    "Prefer concise terminal-friendly responses.",
+    "Use correct terminology (Location not Campus for Awaken Church sites)."
+  ]
+}

@@ -1,0 +1,208 @@
+{
+  "agent_id": "Rubenchis-MacMini",
+  "description": "Rubenchis recurring tasks and responsibilities",
+  "last_updated": "2026-06-19",
+  "tasks": [
+    {
+      "id": "hermes-update-check",
+      "name": "Hermes Update Check",
+      "category": "infrastructure",
+      "schedule": "Daily @ 8:00 AM CDT",
+      "cron_job_id": "67f76e74f2cc",
+      "description": "Check if new commits are available for Hermes Agent repo (dry-run). Notify Ruben of what's new.",
+      "deliver_to": "telegram",
+      "status": "active"
+    },
+    {
+      "id": "hermes-auto-update",
+      "name": "Hermes Auto Update",
+      "category": "infrastructure",
+      "schedule": "Daily @ 6:30 AM CDT",
+      "cron_job_id": "bb8304fa607e",
+      "description": "Run hermes update to pull and apply new commits. Summarize changes for Ruben.",
+      "deliver_to": "telegram",
+      "status": "active"
+    },
+    {
+      "id": "awaken-church-sermons",
+      "name": "Awaken Church Sermon Notes",
+      "category": "client-work",
+      "schedule": "As-needed (weekly sermons)",
+      "description": "Process sermon notes/messages for Awaken Church. Includes docx extraction, markdown conversion, and content organization.",
+      "paths": [
+        "~/Desktop/Hermes/clients/Awaken-Church-Messages/",
+        "~/Desktop/Hermes/clients/Awaken-Church-Messages/sermons/"
+      ],
+      "scripts": ["awaken_notes.py"],
+      "status": "active"
+    },
+    {
+      "id": "awaken-pixieset",
+      "name": "Awaken Pixieset Pipeline",
+      "category": "client-work",
+      "schedule": "As-needed",
+      "description": "Extract, process, and upload content to Pixieset for Awaken Church. Handles image extraction, metadata, and uploads.",
+      "paths": [
+        "~/Desktop/Hermes/clients/Awaken-Pixieset/"
+      ],
+      "scripts": ["pixieset_pipeline.py", "pixieset_extract.py", "pixieset_upload.py"],
+      "status": "active"
+    },
+    {
+      "id": "awaken-receipts",
+      "name": "Awaken Receipts Tracker",
+      "category": "client-work",
+      "schedule": "As-needed",
+      "description": "Track and organize receipts for Awaken Church — AI services (OpenAI, Claude, xAI, Kimi, Nous Research), hosting (Vercel), and tools.",
+      "paths": [
+        "~/Desktop/Hermes/clients/Awaken-Receipts-Tracker/"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "blackdoctor-pro",
+      "name": "BlackDoctor.pro WordPress Support",
+      "category": "client-work",
+      "schedule": "As-needed",
+      "description": "WordPress site management for blackdoctor.pro — 800+ medical/health posts. Bulk operations, plugin dev, post re-saving, content management.",
+      "status": "active"
+    },
+    {
+      "id": "supermemory-sync",
+      "name": "Supermemory Cloud Brain",
+      "category": "memory",
+      "schedule": "Continuous",
+      "description": "Maintain Supermemory as Ruben's primary cloud brain (tag: rubenchis). Save important facts, search past context, sync durable knowledge.",
+      "api_endpoint": "POST /v3/search, POST /v3/ingest/add-document",
+      "status": "active"
+    },
+    {
+      "id": "obsidian-vault",
+      "name": "Obsidian Vault Management",
+      "category": "memory",
+      "schedule": "Continuous",
+      "description": "Read, write, and organize notes in the Obsidian vault. Primary local memory store with wikilinks under Rubenchis/ hierarchy.",
+      "vault_path": "/Volumes/RubenchisSSD/Obsidian",
+      "status": "active"
+    },
+    {
+      "id": "memory-management",
+      "name": "Persistent Memory Maintenance",
+      "category": "memory",
+      "schedule": "Continuous",
+      "description": "Keep Rubenchis memory core up to date — user preferences, environment facts, lessons learned. Prune stale entries, add new discoveries.",
+      "status": "active"
+    },
+    {
+      "id": "telegram-support",
+      "name": "Telegram Messaging",
+      "category": "communication",
+      "schedule": "On-demand",
+      "description": "Respond to Ruben's Telegram messages — questions, tasks, research, coding, life organization. Bot token configured.",
+      "chat_id": "6955916069",
+      "status": "active"
+    },
+    {
+      "id": "research",
+      "name": "Research & Web Intelligence",
+      "category": "research",
+      "schedule": "As-needed",
+      "description": "Web searches, article analysis, competitive research, AI news monitoring. Uses web_search, browser tools, and research skills.",
+      "status": "active"
+    },
+    {
+      "id": "x-post-creator",
+      "name": "X/Twitter Post Creator",
+      "category": "social-media",
+      "schedule": "As-needed",
+      "description": "Draft and manage X/Twitter posts. Custom workflow in skills/x-post-creator/.",
+      "paths": [
+        "~/Desktop/Hermes/skills/x-post-creator/"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "wordpress-development",
+      "name": "WordPress Plugin Development",
+      "category": "development",
+      "schedule": "As-needed",
+      "description": "Build and maintain WordPress plugins. Prefers Codex for primary dev, mimo-v2-pro as backup model.",
+      "status": "active"
+    },
+    {
+      "id": "custom-skills",
+      "name": "Custom Skills Management",
+      "category": "infrastructure",
+      "schedule": "Continuous",
+      "description": "Maintain and update custom skills in ~/Desktop/Hermes/skills/. Currently: x-post-creator, last30days.",
+      "paths": [
+        "~/Desktop/Hermes/skills/"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "tasks-file-maintenance",
+      "name": "Tasks File Maintenance",
+      "category": "infrastructure",
+      "schedule": "Continuous",
+      "description": "Keep rubenchis-macmini-tasks.json up to date. Add new tasks when created (cron jobs, client work, workflows), remove stale ones, update schedules and statuses. Review after every cron job creation, skill addition, client onboard, or workflow change.",
+      "paths": [
+        "~/Desktop/Hermes/tasks/rubenchis-macmini-tasks.json"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "lobster-workflow-engine",
+      "name": "Lobster Workflow Engine",
+      "category": "development",
+      "schedule": "As-needed",
+      "description": "Maintain and run Lobster workflow engine at ~/Projects/lobster/.",
+      "paths": [
+        "~/Projects/lobster/"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "hermes-webui",
+      "name": "Hermes Web UI",
+      "category": "infrastructure",
+      "schedule": "As-needed",
+      "description": "Maintain the Hermes Web UI dashboard at ~/Desktop/Hermes/hermes-webui/. API backend with session management, goals, plugins, and runtime adapter.",
+      "paths": [
+        "~/Desktop/Hermes/hermes-webui/"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "news-digest",
+      "name": "AI News Digest",
+      "category": "research",
+      "schedule": "Daily @ 7:00 AM & 4:00 PM CDT",
+      "description": "AI-focused news digest delivered to Telegram. Curated for Ruben's interests — AI news specifically, not general tech. Currently inactive (cron job needs re-setup).",
+      "deliver_to": "telegram",
+      "status": "inactive"
+    },
+    {
+      "id": "clients-management",
+      "name": "Client Management",
+      "category": "client-work",
+      "schedule": "Continuous",
+      "description": "Track and manage all client work under ~/Desktop/Hermes/clients/. Maintain clients.json, onboard new clients, archive completed work.",
+      "paths": [
+        "~/Desktop/Hermes/clients/clients.json"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "file-organization",
+      "name": "File Organization",
+      "category": "infrastructure",
+      "schedule": "Continuous",
+      "description": "All project files go in ~/Desktop/Hermes/, never directly on Desktop. Enforce folder structure, clean up temp files, organize working directories.",
+      "paths": [
+        "~/Desktop/Hermes/"
+      ],
+      "status": "active"
+    }
+  ]
+}
