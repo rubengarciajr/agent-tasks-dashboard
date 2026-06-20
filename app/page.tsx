@@ -136,7 +136,7 @@ export default function AgentDashboard() {
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       {/* Top Bar */}
       <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900">
               <Users className="h-5 w-5" />
@@ -161,7 +161,7 @@ export default function AgentDashboard() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-7xl px-6 py-8">
+      <div className="mx-auto max-w-screen-2xl px-8 py-10">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-semibold tracking-tighter">What matters most</h1>
